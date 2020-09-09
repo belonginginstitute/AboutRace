@@ -94,10 +94,19 @@ const Content = styled(Row)`
   margin: 0 auto;
   padding: 18px 0 72px 0;
   align-items: flex-start;
+
+  @media (max-width: 812px) { /* mobile */
+    flex-direction:column;
+  }
+
 `
 
 const SideBar = styled(Column)`
-  display: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+
 
   flex: 1;
 
@@ -105,21 +114,26 @@ const SideBar = styled(Column)`
   padding-right: 30px;
 
   @media (min-width: 1025px) { /* desktop */
-    display: flex;
-    flex-direction: column;
-    justify-content: top;
+
   }
 
-  @media (max-width: 812px) { /* mobile */
-    display: none;
-  }
+  // @media (max-width: 812px) { /* mobile */
+  //   display: none;
+  // }
 
 
   padding: 35px;
-  background: white;
-  border-radius: 15px;
+  margin-top: 55px;
+ 
   height: auto;
-  border:1px solid ${softblack};
+
+  // border-radius: 15px;
+  // background: white;
+  // border:1px solid ${softblack};
+`
+
+const Chat = styled(Column)`
+  display: block;
 `
 
 const ContentBar = styled(Column)`
@@ -269,16 +283,20 @@ class EventsPage extends React.Component {
     const events = get(this, `props.data.events.edges`).map(edge => edge.node)
 
     let event = null;
+ 
     events.forEach(function(item) {
       if(item.id == '1f620dc8-dc7e-4dba-83a3-95f8a7e0bbcb'){
         event = item;
-       
       }
   
     })
 
     let title = event.title;
     let body = event.body.processed;
+
+
+    let sidebar = event.field_sidebar.processed;
+
 
     let videoURL = event.field_external_video_url.uri;
 
@@ -323,7 +341,9 @@ class EventsPage extends React.Component {
                 }
                 { renderTags() }
               </SideBar> */}
-
+              <SideBar>
+                <Chat dangerouslySetInnerHTML={{ __html: sidebar }} />
+              </SideBar>
             </Content>
           </TopContainer>
 
@@ -351,6 +371,9 @@ export const query = graphql`
           id
           title
           body {
+            processed
+          }
+          field_sidebar {
             processed
           }
           field_external_video_url {
